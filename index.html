@@ -1,180 +1,38 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>全能編碼小工具 - 網頁版</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bbjin.com - 官方首頁</title>
     <style>
-        /* CSS：這裡負責美化介面 */
-        body { font-family: sans-serif; background-color: #f4f7f6; padding: 20px; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .tabs { display: flex; border-bottom: 2px solid #ddd; margin-bottom: 20px; }
-        .tab-btn { padding: 10px 20px; cursor: pointer; border: none; background: none; font-size: 16px; }
-        .tab-btn.active { border-bottom: 3px solid #007bff; color: #007bff; font-weight: bold; }
-        .content { display: none; }
-        .content.active { display: block; }
-        .input-group { margin-bottom: 15px; }
-        input, select { padding: 8px; width: 200px; margin-right: 10px; border: 1px solid #ccc; border-radius: 4px; }
-        button { padding: 8px 15px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 4px; }
-        button:hover { background-color: #0056b3; }
-        .result-box { background: #eee; padding: 20px; font-size: 24px; font-weight: bold; text-align: center; margin-top: 20px; border-radius: 5px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        body { font-family: Arial, sans-serif; margin: 0; background-color: #f4f7f6; }
+        /* 導航欄樣式 */
+        nav { background: #333; color: white; padding: 1rem; display: flex; justify-content: space-around; }
+        nav a { color: white; text-decoration: none; font-weight: bold; }
+        nav a:hover { color: #007bff; }
+        /* 內容樣式 */
+        .hero { text-align: center; padding: 100px 20px; background: white; }
+        .hero h1 { font-size: 3rem; color: #333; }
+        .container { max-width: 800px; margin: 20px auto; padding: 20px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>全能編碼小工具 (Web 版)</h2>
-    
-    <div class="tabs">
-        <button class="tab-btn active" onclick="showTab('generate')">1. 生成編碼</button>
-        <button class="tab-btn" onclick="showTab('elements')">2. 編輯元素</button>
-        <button class="tab-btn" onclick="showTab('types')">3. 設定類型</button>
+    <nav>
+        <a href="index.html">首頁</a>
+        <a href="tools.html">分類工具 (編碼器)</a>
+        <a href="#">關於我們</a>
+    </nav>
+
+    <div class="hero">
+        <h1>歡迎來到 BBJIN.COM</h1>
+        <p>這是我們共同開發的數位工具平台</p>
     </div>
 
-    <div id="generate" class="content active">
-        <div class="input-group">
-            <label>選擇類型：</label>
-            <select id="typeSelect" onchange="updateLimitHint()"></select>
-            <span id="limitHint" style="color: blue; font-weight: bold;"></span>
-        </div>
-        <div class="input-group">
-            <label>選擇元素：</label>
-            <select id="elementSelect"></select>
-            <button onclick="addToSequence()">加入序列</button>
-        </div>
-        <p>當前序列：<span id="sequenceDisplay">無</span></p>
-        <div class="result-box" id="resultDisplay">尚未生成</div>
-        <button style="background: #666;" onclick="clearSequence()">全部清除</button>
+    <div class="container">
+        <h2>最新工具</h2>
+        <p>點擊上方導航欄的「分類工具」即可開始使用編碼器。</p>
     </div>
-
-    <div id="elements" class="content">
-        <h3>管理短碼元素</h3>
-        <input type="text" id="elName" placeholder="名稱 (如:紅色)">
-        <input type="text" id="elCode" placeholder="短碼 (如:RD)">
-        <button onclick="addElement()">儲存</button>
-        <table id="elTable">
-            <thead><tr><th>名稱</th><th>短碼</th><th>操作</th></tr></thead>
-            <tbody></tbody>
-        </table>
-    </div>
-
-    <div id="types" class="content">
-        <h3>管理編碼規則</h3>
-        <input type="text" id="typeName" placeholder="類型 (如:SKU)">
-        <input type="number" id="typeMax" placeholder="限制數量 (0不限)">
-        <button onclick="addType()">新增規則</button>
-        <table id="typeTable">
-            <thead><tr><th>類型</th><th>限制</th><th>操作</th></tr></thead>
-            <tbody></tbody>
-        </table>
-    </div>
-</div>
-
-<script>
-    /* JavaScript：大腦區域 */
-    
-    // 初始化資料（這裡就是你學 C# 時的 ObservableCollection 概念）
-    let allElements = [
-        { name: "紅色", code: "RD" },
-        { name: "大號", code: "L" }
-    ];
-    let customTypes = [
-        { name: "群組編碼", max: 0 },
-        { name: "SKU編碼", max: 3 }
-    ];
-    let currentSequence = [];
-
-    // --- 分頁切換邏輯 ---
-    function showTab(tabId) {
-        document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
-        event.currentTarget.classList.add('active');
-    }
-
-    // --- 元素管理邏輯 ---
-    function addElement() {
-        let name = document.getElementById('elName').value;
-        let code = document.getElementById('elCode').value.toUpperCase();
-        if(name && code) {
-            allElements.push({ name, code });
-            renderAll();
-            document.getElementById('elName').value = '';
-            document.getElementById('elCode').value = '';
-        }
-    }
-
-    function deleteElement(index) {
-        allElements.splice(index, 1);
-        renderAll();
-    }
-
-    // --- 類型管理邏輯 ---
-    function addType() {
-        let name = document.getElementById('typeName').value;
-        let max = parseInt(document.getElementById('typeMax').value) || 0;
-        if(name) {
-            customTypes.push({ name, max });
-            renderAll();
-        }
-    }
-
-    // --- 核心生成邏輯 ---
-    function addToSequence() {
-        let typeIdx = document.getElementById('typeSelect').value;
-        let elIdx = document.getElementById('elementSelect').value;
-        let selectedType = customTypes[typeIdx];
-        let selectedEl = allElements[elIdx];
-
-        if (selectedType.max > 0 && currentSequence.length >= selectedType.max) {
-            alert("超過該類型的數量限制！");
-            return;
-        }
-
-        currentSequence.push(selectedEl.code);
-        updateUI();
-    }
-
-    function clearSequence() {
-        currentSequence = [];
-        updateUI();
-    }
-
-    function updateUI() {
-        document.getElementById('sequenceDisplay').innerText = currentSequence.join(' -> ') || '無';
-        document.getElementById('resultDisplay').innerText = currentSequence.join('-') || '尚未生成';
-    }
-
-    function updateLimitHint() {
-        let idx = document.getElementById('typeSelect').value;
-        let t = customTypes[idx];
-        document.getElementById('limitHint').innerText = t.max === 0 ? "(無限制)" : `(限 ${t.max} 個)`;
-        clearSequence();
-    }
-
-    // --- 渲染畫面 (將資料庫的內容畫到 HTML 裡) ---
-    function renderAll() {
-        // 更新下拉選單
-        let elSelect = document.getElementById('elementSelect');
-        elSelect.innerHTML = allElements.map((el, i) => `<option value="${i}">${el.name} [${el.code}]</option>`).join('');
-        
-        let typeSelect = document.getElementById('typeSelect');
-        typeSelect.innerHTML = customTypes.map((t, i) => `<option value="${i}">${t.name}</option>`).join('');
-
-        // 更新表格
-        document.querySelector('#elTable tbody').innerHTML = allElements.map((el, i) => 
-            `<tr><td>${el.name}</td><td>${el.code}</td><td><button onclick="deleteElement(${i})">刪</button></td></tr>`).join('');
-
-        document.querySelector('#typeTable tbody').innerHTML = customTypes.map((t, i) => 
-            `<tr><td>${t.name}</td><td>${t.max == 0 ? '不限' : t.max}</td><td><button onclick="customTypes.splice(${i},1);renderAll()">刪</button></td></tr>`).join('');
-        
-        updateLimitHint();
-    }
-
-    // 網頁開啟時先跑一次渲染
-    renderAll();
-</script>
 
 </body>
 </html>

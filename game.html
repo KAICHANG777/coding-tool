@@ -149,6 +149,19 @@
             75% { transform: translate(5px, -5px); }
         }
         .shake { animation: shake 0.1s linear infinite; border-color: #ff3e3e !important; }
+        
+        /* Win/Explode Flash Effects */
+        .flash-win { animation: flashWin 0.5s ease-out; }
+        .flash-explode { animation: flashExplode 0.5s ease-out; }
+        
+        @keyframes flashWin {
+            0% { background: rgba(59, 130, 246, 0.5); box-shadow: 0 0 100px #3b82f6; }
+            100% { background: rgba(138, 43, 226, 0.1); box-shadow: 0 0 50px rgba(138, 43, 226, 0.4); }
+        }
+        @keyframes flashExplode {
+            0% { background: rgba(255, 62, 62, 0.8); box-shadow: 0 0 100px #ff3e3e; transform: scale(1.2); }
+            100% { background: rgba(138, 43, 226, 0.1); box-shadow: 0 0 50px rgba(138, 43, 226, 0.4); transform: scale(1); }
+        }
 
         .game-over-overlay {
             position: fixed;
@@ -270,7 +283,6 @@
         }
 
         function triggerWin(playerIndex) {
-            state.isGameOver = true;
             const winners = ["玩家 1", "玩家 2", "玩家 3"];
             const winner = winners[playerIndex - 1];
             
@@ -279,22 +291,24 @@
             if (playerIndex === 3) state.p3Score += 10;
             state.sysCollected += 2;
             
-            winnerText.innerText = `🎉 ${winner} 成功封印魔盒！`;
-            winnerText.style.color = playerIndex === 1 ? '#3b82f6' : (playerIndex === 2 ? '#ef4444' : '#10b981');
-            reasonText.innerText = `獲得 10 貨幣，系統收取 2 貨幣手續費。`;
-            gameOverOverlay.style.display = 'flex';
+            // Visual Effect
+            box.classList.add('flash-win');
+            setTimeout(() => box.classList.remove('flash-win'), 500);
+            
+            // Auto Reset
+            state.count = 0;
             updateUI();
         }
 
         function triggerExplode() {
-            state.isGameOver = true;
             state.sysCollected += state.count;
-            state.count = 0;
             
-            winnerText.innerText = `💥 魔盒失控爆裂！`;
-            winnerText.style.color = '#ff3e3e';
-            reasonText.innerText = `系統沒收了所有貨幣。`;
-            gameOverOverlay.style.display = 'flex';
+            // Visual Effect
+            box.classList.add('flash-explode');
+            setTimeout(() => box.classList.remove('flash-explode'), 500);
+            
+            // Auto Reset
+            state.count = 0;
             updateUI();
         }
 
@@ -304,7 +318,6 @@
             state.count++;
             if (state.count >= 12) {
                 triggerExplode();
-                clearInterval(sysInterval);
             }
             updateUI();
         }, 1000);
@@ -320,6 +333,7 @@
                 reasonText.innerText = "沒人能在時間內征服魔盒。";
                 gameOverOverlay.style.display = 'flex';
                 clearInterval(timerInterval);
+                clearInterval(sysInterval);
             }
             updateUI();
         }, 10);

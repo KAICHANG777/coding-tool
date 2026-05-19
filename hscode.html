@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>海關編碼查詢 - BBJin Web</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">BBJin WEB</a>
+            <div class="nav-links">
+                <a href="index.html">首頁</a>
+                <a href="tools.html">CCC Code 小工具</a>
+                <a href="hscode.html" class="active">海關編碼查詢</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="hero" style="margin-bottom: 3rem;">
+            <h1 style="font-size: 2.5rem;">海關編碼 <span class="glow-text">即時查詢</span></h1>
+            <p>透過關鍵字或代碼前綴，精準檢索全球 HS Code 稅則與規範。</p>
+        </section>
+
+        <div class="tool-container">
+            <div class="form-group">
+                <label for="hs-search">搜尋關鍵字 (如：手機、筆記型電腦、8471)</label>
+                <div style="position: relative;">
+                    <input type="text" id="hs-search" placeholder="輸入關鍵字或編碼...">
+                    <span style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-secondary);">🔍</span>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="country-select">目標國家/地區</label>
+                <select id="country-select">
+                    <option value="TW">台灣 (Taiwan)</option>
+                    <option value="CN">中國 (China)</option>
+                    <option value="US">美國 (USA)</option>
+                    <option value="EU">歐盟 (EU)</option>
+                </select>
+            </div>
+
+            <button class="btn btn-primary" style="width: 100%;" id="search-btn">執行深度檢索</button>
+
+            <div class="result-area" id="search-results">
+                <p style="color: var(--text-secondary); text-align: center;">輸入關鍵字開始搜尋...</p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 BBJin Web. All rights reserved. 科技感商務風格範本</p>
+    </footer>
+
+    <script>
+        const searchInput = document.getElementById('hs-search');
+        const searchBtn = document.getElementById('search-btn');
+        const resultsArea = document.getElementById('search-results');
+
+        searchBtn.addEventListener('click', () => {
+            const query = searchInput.value.trim();
+            if (!query) {
+                resultsArea.innerHTML = '<p style="color: #ef4444; text-align: center;">請輸入搜尋內容</p>';
+                return;
+            }
+
+            resultsArea.innerHTML = '<p style="text-align: center; color: var(--primary-color);">正在檢索數據庫...</p>';
+
+            // 模擬搜尋延遲
+            setTimeout(() => {
+                resultsArea.innerHTML = `
+                    <div style="animation: fadeIn 0.5s ease-out;">
+                        <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem;">
+                            <h4 style="color: var(--primary-color);">8471.30.00</h4>
+                            <p style="font-size: 0.9rem;">可攜式自動資料處理機，重量不超過１０公斤，且至少由一中央處理單元、一鍵盤及一顯示器所組成者</p>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--primary-color);">8517.13.00</h4>
+                            <p style="font-size: 0.9rem;">智慧型手機 (Smartphones)</p>
+                        </div>
+                        <p style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-secondary); text-align: right;">找到 2 筆相關結果</p>
+                    </div>
+                `;
+            }, 800);
+        });
+    </script>
+</body>
+</html>

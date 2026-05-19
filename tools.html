@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCC Code 編碼小工具 - BBJin Web</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">BBJin WEB</a>
+            <div class="nav-links">
+                <a href="index.html">首頁</a>
+                <a href="tools.html" class="active">CCC Code 小工具</a>
+                <a href="hscode.html">海關編碼查詢</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="hero" style="margin-bottom: 3rem;">
+            <h1 style="font-size: 2.5rem;">CCC Code <span class="glow-text">編碼工具</span></h1>
+            <p>輸入產品相關代碼，即時進行格式檢查與分類驗證。</p>
+        </section>
+
+        <div class="tool-container">
+            <div class="form-group">
+                <label for="ccc-input">請輸入 CCC Code (10碼或11碼)</label>
+                <input type="text" id="ccc-input" placeholder="例如: 8471.30.00.00-8" maxlength="15">
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn btn-primary" id="check-btn">開始校驗</button>
+                <button class="btn" style="background: rgba(255,255,255,0.1); color: white;" id="clear-btn">清空內容</button>
+            </div>
+
+            <div class="result-area" id="result-display">
+                <p style="color: var(--text-secondary); text-align: center;">等待輸入數據...</p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 BBJin Web. All rights reserved. 科技感商務風格範本</p>
+    </footer>
+
+    <script>
+        const input = document.getElementById('ccc-input');
+        const checkBtn = document.getElementById('check-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const resultDisplay = document.getElementById('result-display');
+
+        checkBtn.addEventListener('click', () => {
+            const val = input.value.trim();
+            if (!val) {
+                resultDisplay.innerHTML = '<p style="color: #ef4444;">請輸入代碼！</p>';
+                return;
+            }
+
+            // 簡單的模擬驗證邏輯
+            resultDisplay.innerHTML = `
+                <div style="animation: fadeIn 0.5s ease-out;">
+                    <p style="color: #10b981; font-weight: 600; margin-bottom: 0.5rem;">✓ 驗證通過</p>
+                    <p>代碼: ${val}</p>
+                    <p style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-secondary);">分類：自動化資料處理機及其單元；磁性或光學閱讀機、將資料轉錄為資料媒體之機器及處理此類資料之機器，未列名者。</p>
+                </div>
+            `;
+        });
+
+        clearBtn.addEventListener('click', () => {
+            input.value = '';
+            resultDisplay.innerHTML = '<p style="color: var(--text-secondary); text-align: center;">等待輸入數據...</p>';
+        });
+    </script>
+</body>
+</html>
